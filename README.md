@@ -2,7 +2,7 @@
 
 [![Ouvrir l'application](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](LIEN_DE_TON_APPLICATION)
 
-**👉 Application en ligne : [https://projet-aegis-health-coverage-simplon.streamlit.app](LIEN_DE_TON_APPLICATION)**
+**👉 Application en ligne : [https://projet-aegis-health-coverage-simplon.streamlit.app](https://projet-aegis-health-coverage-simplon.streamlit.app)**
 
 ## Contexte
 
@@ -45,4 +45,4 @@ streamlit run app.py
 Python · pandas · scikit-learn · Plotly · Streamlit
 
 ---
-Projet réalisé en binôme dans le cadre de la formation Data Analyst – Simplon.
+Projet réalisé dans le cadre de la formation Data Analyst – Simplon.
