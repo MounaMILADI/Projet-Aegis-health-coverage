@@ -52,6 +52,12 @@ def format_dollars(valeur):
     return f"{valeur:,.0f} $".replace(",", " ")
 
 
+def dollars_md(valeur):
+    """Même format, pour les textes Markdown : le symbole $ est échappé,
+    sinon Streamlit interprète le texte entre deux $ comme une formule mathématique."""
+    return format_dollars(valeur).replace("$", "\\$")
+
+
 # -----------------------------------------------------------------------------
 # Chargement des données (mis en cache pour ne pas relire le fichier à chaque clic)
 # -----------------------------------------------------------------------------
@@ -244,7 +250,7 @@ if section == "📊 Analyse des coûts":
                 part_fumeurs_eleves = (eleves["smoker"] == "yes").mean() * 100
                 st.info(f"Les fumeurs représentent **{part_fumeurs:.0f} %** des assurés, "
                         f"mais **{part_fumeurs_eleves:.0f} %** des assurés dont les frais "
-                        "dépassent 30 000 $.")
+                        "dépassent 30 000 \\$.")
 
         # Onglet 2 : deux graphiques côte à côte
         with onglet_profil:
@@ -354,8 +360,8 @@ elif section == "🌲 Le modèle":
         gain = (1 - final["MAE test"] / base["MAE test"]) * 100
 
         st.markdown(
-            f"**Diagnostic** : le modèle de base se trompait de {format_dollars(base['MAE train'])} "
-            f"sur les assurés d'entraînement, mais de {format_dollars(base['MAE test'])} sur des "
+            f"**Diagnostic** : le modèle de base se trompait de {dollars_md(base['MAE train'])} "
+            f"sur les assurés d'entraînement, mais de {dollars_md(base['MAE test'])} sur des "
             "assurés jamais vus (surapprentissage).  \n"
             "**Méthode** : réduire la complexité des arbres, en limitant leur profondeur "
             "(`max_depth`) ou en imposant un minimum d'assurés par feuille (`min_samples_leaf`).")
@@ -372,7 +378,7 @@ elif section == "🌲 Le modèle":
 
         st.markdown(
             f"**Résultat** : `min_samples_leaf = 10` donne l'erreur la plus faible sur le test, "
-            f"{format_dollars(final['MAE test'])} contre {format_dollars(base['MAE test'])}, "
+            f"{dollars_md(final['MAE test'])} contre {dollars_md(base['MAE test'])}, "
             f"soit **{gain:.0f} % d'erreur en moins**, sans écart entre entraînement et test.")
 
     with onglet_imp:
@@ -423,7 +429,7 @@ else:
     # --- Résultat ---
     with col_resultat:
         st.metric("Frais médicaux annuels estimés", format_dollars(prediction))
-        st.caption(f"Marge d'erreur moyenne du modèle : ± {format_dollars(metriques['MAE'])}. "
+        st.caption(f"Marge d'erreur moyenne du modèle : ± {dollars_md(metriques['MAE'])}. "
                    "Ce montant correspond à la prime pure, c'est-à-dire le coût "
                    "attendu des soins, hors frais de gestion et marge de l'assureur.")
 
@@ -431,17 +437,17 @@ else:
         ecart = (prediction / mediane - 1) * 100
         sens = "au-dessus" if ecart >= 0 else "en dessous"
         st.write(f"Ce profil se situe **{abs(ecart):.0f} % {sens}** des frais médians "
-                 f"du portefeuille ({format_dollars(mediane)}).")
+                 f"du portefeuille ({dollars_md(mediane)}).")
 
         # Impact du tabac sur l'estimation
         if fumeur == "yes":
             prediction_sans_tabac = predire(age, sexe, bmi, enfants, "no", region)
             st.info(f"Sans tabac, l'estimation serait de "
-                    f"**{format_dollars(prediction_sans_tabac)}**, soit "
-                    f"{format_dollars(prediction - prediction_sans_tabac)} de moins par an.")
+                    f"**{dollars_md(prediction_sans_tabac)}**, soit "
+                    f"{dollars_md(prediction - prediction_sans_tabac)} de moins par an.")
 
         # Impact de l'obésité sur l'estimation
         if bmi >= 30:
             prediction_imc_29 = predire(age, sexe, 29.9, enfants, fumeur, region)
             st.info(f"Avec un IMC juste sous le seuil de l'obésité (29,9), l'estimation "
-                    f"serait de **{format_dollars(prediction_imc_29)}**.")
+                    f"serait de **{dollars_md(prediction_imc_29)}**.")
